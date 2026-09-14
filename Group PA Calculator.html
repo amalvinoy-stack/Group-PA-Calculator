@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GPA Premium Calculator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background-color: #f4f7f6;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .calculator-card {
+      background: #ffffff;
+      max-width: 900px;
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .header {
+      background: #1e3a8a;
+      color: #ffffff;
+      padding: 24px;
+      text-align: center;
+    }
+    .header h1 {
+      font-size: 1.6rem;
+      margin-bottom: 6px;
+    }
+    .header p {
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+    .content {
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 768px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+    }
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #1e3a8a;
+      margin-bottom: 16px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 6px;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #475569;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus {
+      border-color: #2563eb;
+    }
+    .results-panel {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px dashed #cbd5e1;
+      font-size: 0.9rem;
+    }
+    .result-row:last-child {
+      border-bottom: none;
+    }
+    .result-label {
+      color: #64748b;
+    }
+    .result-value {
+      font-weight: 600;
+      color: #0f172a;
+    }
+    .total-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 16px;
+      text-align: center;
+    }
+    .total-box .label {
+      font-size: 0.85rem;
+      color: #1e40af;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .total-box .amount {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #1e3a8a;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="calculator-card">
+  <div class="header">
+    <h1>Group Personal Accident (GPA) Calculator</h1>
+    <p>Age Coverage: 12 - 70 Years</p>
+  </div>
+
+  <div class="content">
+    <!-- Input Section -->
+    <div class="input-panel">
+      <div class="section-title">Policy Details</div>
+      
+      <div class="form-group">
+        <label for="employees">Number of Employees</label>
+        <input type="number" id="employees" value="70" min="1" oninput="calculatePremium()">
+      </div>
+
+      <div class="form-group">
+        <label for="si">Sum Insured Per Employee (₹)</label>
+        <input type="number" id="si" value="200000" step="10000" min="10000" oninput="calculatePremium()">
+      </div>
+
+      <div class="form-group">
+        <label for="tableBenefit">Table of Benefit</label>
+        <select id="tableBenefit" onchange="calculatePremium()">
+          <option value="I">Table I - Death</option>
+          <option value="II">Table II - Death & PTD</option>
+          <option value="III">Table III - Death, PTD & PPD</option>
+          <option value="IV" selected>Table IV - Death, PTD, PPD & TTD</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="riskGroup">Risk Group</label>
+        <select id="riskGroup" onchange="calculatePremium()">
+          <option value="1">Risk Group 1</option>
+          <option value="2" selected>Risk Group 2</option>
+          <option value="3">Risk Group 3</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="medExt">Medical Extension Loading (%)</label>
+        <select id="medExt" onchange="calculatePremium()">
+          <option value="0" selected>0%</option>
+          <option value="5">5%</option>
+          <option value="10">10%</option>
+          <option value="15">15%</option>
+          <option value="20">20%</option>
+          <option value="25">25%</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="discount">Discount (%)</label>
+        <input type="number" id="discount" value="0" min="0" max="100" step="0.5" oninput="calculatePremium()">
+      </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="results-panel">
+      <div>
+        <div class="section-title">Premium Breakdown</div>
+
+        <div class="result-row">
+          <span class="result-label">Rate per Lakh</span>
+          <span class="result-value" id="ratePerLakh">₹ 200.00</span>
+        </div>
+
+        <div class="result-row">
+          <span class="result-label">SI Factor (Per Lakh)</span>
+          <span class="result-value" id="siFactor">2.00</span>
+        </div>
+
+        <div class="result-row">
+          <span class="result-label">Base Premium / Employee</span>
+          <span class="result-value" id="basePerEmp">₹ 400.00</span>
+        </div>
+
+        <div class="result-row">
+          <span class="result-label">Medical Extension Loading</span>
+          <span class="result-value" id="medExtAmount">₹ 0.00</span>
+        </div>
+
+        <div class="result-row">
+          <span class="result-label">Discount Amount</span>
+          <span class="result-value" id="discountAmount">₹ 0.00</span>
+        </div>
+
+        <div class="result-row">
+          <span class="result-label">Final Premium / Employee</span>
+          <span class="result-value" id="finalPerEmp">₹ 400.00</span>
+        </div>
+
+        <div class="result-row">
+          <span class="result-label">Net Premium (Excl. GST)</span>
+          <span class="result-value" id="netPremium">₹ 28,000.00</span>
+        </div>
+
+        <div class="result-row">
+          <span class="result-label">GST (18%)</span>
+          <span class="result-value" id="gstAmount">₹ 5,040.00</span>
+        </div>
+      </div>
+
+      <div class="total-box">
+        <div class="label">Total Payable Policy Premium</div>
+        <div class="amount" id="totalPremium">₹ 33,040.00</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Rating structure from the sheet
+  const rates = {
+    'I':   { '1': 45,  '2': 60,  '3': 90 },
+    'II':  { '1': 65,  '2': 90,  '3': 130 },
+    'III': { '1': 95,  '2': 125, '3': 175 },
+    'IV':  { '1': 150, '2': 200, '3': 300 }
+  };
+
+  function calculatePremium() {
+    const numEmp = parseFloat(document.getElementById('employees').value) || 0;
+    const si = parseFloat(document.getElementById('si').value) || 0;
+    const table = document.getElementById('tableBenefit').value;
+    const risk = document.getElementById('riskGroup').value;
+    const medExtPct = parseFloat(document.getElementById('medExt').value) || 0;
+    const discountPct = parseFloat(document.getElementById('discount').value) || 0;
+
+    const rate = rates[table][risk];
+    const factor = si / 100000;
+    const basePerEmp = rate * factor;
+    const medExtAmt = basePerEmp * (medExtPct / 100);
+    const premiumBeforeDisc = basePerEmp + medExtAmt;
+    const discAmt = premiumBeforeDisc * (discountPct / 100);
+    const finalPerEmp = premiumBeforeDisc - discAmt;
+
+    const netPolicyPremium = finalPerEmp * numEmp;
+    const gst = netPolicyPremium * 0.18;
+    const totalPolicyPremium = netPolicyPremium + gst;
+
+    // Formatting outputs
+    const fmt = num => '₹ ' + num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    document.getElementById('ratePerLakh').innerText = '₹ ' + rate.toFixed(2);
+    document.getElementById('siFactor').innerText = factor.toFixed(2);
+    document.getElementById('basePerEmp').innerText = fmt(basePerEmp);
+    document.getElementById('medExtAmount').innerText = fmt(medExtAmt);
+    document.getElementById('discountAmount').innerText = fmt(discAmt);
+    document.getElementById('finalPerEmp').innerText = fmt(finalPerEmp);
+    document.getElementById('netPremium').innerText = fmt(netPolicyPremium);
+    document.getElementById('gstAmount').innerText = fmt(gst);
+    document.getElementById('totalPremium').innerText = fmt(totalPolicyPremium);
+  }
+
+  // Initial Run
+  calculatePremium();
+</script>
+
+</body>
+</html>
